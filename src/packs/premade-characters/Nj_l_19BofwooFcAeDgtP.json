@@ -4,7 +4,7 @@
   "type": "character",
   "sort": 100001,
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "infomorph": {
         "name": "Agent",
         "type": "infomorph",
@@ -124,7 +124,7 @@
     },
     "exportSource": {
       "world": "eclipse-phase-2e",
-      "system": "ep2e",
+      "system": "sapphire",
       "coreVersion": "0.7.9",
       "systemVersion": 0.6762
     }
@@ -2351,7 +2351,7 @@
   "img": "icons/svg/mystery-man.svg",
   "folder": null,
   "_stats": {
-    "systemId": "ep2e",
+    "systemId": "sapphire",
     "systemVersion": "1.0",
     "coreVersion": "10.279",
     "createdTime": null,

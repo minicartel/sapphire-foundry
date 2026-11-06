@@ -17,11 +17,11 @@ import { SceneEP } from './scene';
 //   const { coating, payload } = data.flags[EP.Name] || {};
 //   if (coating || payload) {
 //     return produce(data, ({ flags }) => {
-//       if (!flags.ep2e) return;
-//       flags.ep2e.coating =
+//       if (!flags.sapphire) return;
+//       flags.sapphire.coating =
 //         coating &&
 //         pipe(coating[0], baseItemMigration, migrateSubstanceFlags, toTuple);
-//       flags.ep2e.payload =
+//       flags.sapphire.payload =
 //         payload &&
 //         pipe(payload[0], baseItemMigration, migrateExplosiveFlags, toTuple);
 //     });

@@ -113,11 +113,11 @@ const baseItemMigration = <T extends ItemType>(data: ItemEntity<T>) => {
 const substanceGroups = ['baseAppliedItems', 'severityAppliedItems'] as const;
 const migrateSubstanceFlags = (data: ItemEntity<ItemType.Substance>) => {
   return produce(data, ({ flags }) => {
-    if (!flags.ep2e) return;
+    if (!flags.sapphire) return;
     for (const group of substanceGroups) {
-      const list = flags.ep2e[group];
+      const list = flags.sapphire[group];
       if (list) {
-        flags.ep2e[group] = list.map((i) =>
+        flags.sapphire[group] = list.map((i) =>
           i.type === ItemType.Trait
             ? baseItemMigration(i)
             : baseItemMigration(i),
@@ -129,9 +129,9 @@ const migrateSubstanceFlags = (data: ItemEntity<ItemType.Substance>) => {
 
 const migratePsiFlags = (data: ItemEntity<ItemType.Psi>) => {
   return produce(data, ({ flags }) => {
-    const influences = flags.ep2e?.influences;
-    flags.ep2e = {
-      ...(flags.ep2e ?? {}),
+    const influences = flags.sapphire?.influences;
+    flags.sapphire = {
+      ...(flags.sapphire ?? {}),
       influences: influences
         ? influences.map((i) =>
             i.type === PsiInfluenceType.Trait
@@ -148,9 +148,9 @@ const migratePsiFlags = (data: ItemEntity<ItemType.Psi>) => {
 
 const migrateExplosiveFlags = (data: ItemEntity<ItemType.Explosive>) => {
   return produce(data, ({ flags }) => {
-    if (!flags.ep2e?.substance) return;
-    flags.ep2e.substance = pipe(
-      flags.ep2e.substance[0],
+    if (!flags.sapphire?.substance) return;
+    flags.sapphire.substance = pipe(
+      flags.sapphire.substance[0],
       baseItemMigration,
       migrateSubstanceFlags,
       toTuple,

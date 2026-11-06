@@ -94,7 +94,7 @@ export const createMessage = async ({
 
   if ('dice3d' in game) {
     const successTestRoll =
-      chatMessageData.flags?.ep2e?.successTest?.states[0]?.roll;
+      chatMessageData.flags?.sapphire?.successTest?.states[0]?.roll;
     if (successTestRoll != null) {
       const [tens, ones] =
         successTestRoll < 10

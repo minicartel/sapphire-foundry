@@ -42,7 +42,7 @@ archive.on("error", function (err) {
 // pipe archive data to the file
 archive.pipe(output);
 
-const d = (path) => `ep2e/${path}`;
+const d = (path) => `sapphire/${path}`;
 const df = (path) => [path, d(path)];
 const n = (path) => [path, { name: d(path) }];
 

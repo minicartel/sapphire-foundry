@@ -57,7 +57,7 @@
     "wareType": ""
   },
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "shapes": [
         {
           "name": "Submachine Gun",
@@ -120,7 +120,7 @@
           "folder": "R7CI3UJN1khs9aUI",
           "sort": 500000,
           "flags": {
-            "ep2e": {}
+            "sapphire": {}
           },
           "effects": [],
           "_id": "hh86f29qwz",
@@ -185,7 +185,7 @@
           "folder": "R7CI3UJN1khs9aUI",
           "sort": 800000,
           "flags": {
-            "ep2e": {}
+            "sapphire": {}
           },
           "effects": [],
           "_id": "ve6979vl2s",

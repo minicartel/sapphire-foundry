@@ -4,7 +4,7 @@
   "type": "character",
   "sort": 100001,
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "infomorph": null,
       "psi": {
         "_id": "r5QzyNuK1nbQ154U",
@@ -17,7 +17,7 @@
         "folder": "4NiuUBMK4UDofZH7",
         "sort": 500001,
         "flags": {
-          "ep2e": {
+          "sapphire": {
             "influences": [
               {
                 "type": "physicalDamage",
@@ -2981,7 +2981,7 @@
   "img": "icons/svg/mystery-man.svg",
   "folder": null,
   "_stats": {
-    "systemId": "ep2e",
+    "systemId": "sapphire",
     "systemVersion": "1.0",
     "coreVersion": "10.279",
     "createdTime": null,
