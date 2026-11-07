@@ -1,16 +1,10 @@
-import {
-  renderNumberField,
-  renderTimeField,
-} from '@src/components/field/fields';
-import { renderAutoForm, renderSubmitForm } from '@src/components/form/forms';
+import { renderTimeField } from '@src/components/field/fields';
+import { renderAutoForm } from '@src/components/form/forms';
 import { UseWorldTime } from '@src/components/mixins/world-time-mixin';
 import { Placement } from '@src/components/popover/popover-options';
-import {
-  defaultStandardCalendar,
-  getCurrentDateTime,
-} from '@src/features/calendar';
+import { getCurrentDateTime } from '@src/features/calendar';
 import { parseMilliseconds } from '@src/features/modify-milliseconds';
-import { advanceWorldTime } from '@src/features/time';
+import { advanceWorldTime, currentWorldTimeMS } from '@src/features/time';
 import { localize } from '@src/foundry/localization';
 import { userCan } from '@src/foundry/misc-helpers';
 import { addEPSocketHandler } from '@src/foundry/socket';
@@ -34,13 +28,15 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
 
   @state() private changes: [number, string][] = [];
 
-  @state() private yearStart = 2400;
+  @state() private calendarStart = '2400-01-01';
 
   firstUpdated() {
     addEPSocketHandler('worldTimeChange', (change) => {
       this.changes = [...this.changes.slice(-3), change];
     });
-    gameSettings.yearStart.subscribe((value) => (this.yearStart = value));
+    gameSettings.calendarStart.subscribe(
+      (value) => (this.calendarStart = value),
+    );
   }
 
   private modifyTime(forwards: boolean) {
@@ -56,12 +52,17 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
     this.modifyTime(false);
   }
 
+  private setDate(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.value) return;
+    const { time } = getCurrentDateTime(this.calendarStart);
+    const newStart = Date.parse(input.value) + time - currentWorldTimeMS();
+    gameSettings.calendarStart.update(new Date(newStart).toISOString());
+  }
+
   render() {
     const disabled = this.timeChange === 0;
-    const currentDate = getCurrentDateTime({
-      ...defaultStandardCalendar(),
-      worldStartYear: this.yearStart,
-    });
+    const currentDate = getCurrentDateTime(this.calendarStart);
     const { hours, minutes, seconds } = parseMilliseconds(currentDate.time);
     const canModify = game.user.isGM && userCan('SETTINGS_MODIFY');
     return html`
@@ -78,27 +79,19 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
           placement=${Placement.Left}
           .renderOnDemand=${() => html`
             <sl-popover-section
-              heading=${localize('yearStart')}
+              heading=${localize('date')}
               style="pointer-events: all"
             >
-              ${renderSubmitForm({
-      props: { yearStart: this.yearStart },
-      update: ({ yearStart }) => {
-        if (yearStart) {
-          gameSettings.yearStart.update(yearStart);
-        }
-      },
-      fields: ({ yearStart }) =>
-        renderNumberField(
-          { ...yearStart, label: localize('afterFall') },
-          { min: 1 },
-        ),
-    })}
+              <input
+                type="date"
+                .value=${currentDate.isoDate}
+                @change=${this.setDate}
+              />
             </sl-popover-section>
           `}
         >
           <button class="date" ?disabled=${!canModify} slot="base">
-            ${currentDate.day} ${currentDate.month} ${currentDate.year} ${currentDate.era}
+            ${currentDate.label}
           </button>
         </sl-popover>
       </div>
@@ -111,17 +104,17 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
             >
             </mwc-icon-button>
             ${renderAutoForm({
-          noDebounce: true,
-          props: { change: this.timeChange },
-          update: ({ change }) => {
-            if (change !== undefined) this.timeChange = change;
-          },
-          fields: ({ change }) =>
-            renderTimeField(
-              { ...change, label: '' },
-              { whenZero: `${localize('modify')} ${localize('time')}` },
-            ),
-        })}
+              noDebounce: true,
+              props: { change: this.timeChange },
+              update: ({ change }) => {
+                if (change !== undefined) this.timeChange = change;
+              },
+              fields: ({ change }) =>
+                renderTimeField(
+                  { ...change, label: '' },
+                  { whenZero: `${localize('modify')} ${localize('time')}` },
+                ),
+            })}
             <mwc-icon-button
               ?disabled=${disabled}
               icon="fast_forward"
