@@ -34,7 +34,7 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
 
   @state() private changes: [number, string][] = [];
 
-  @state() private yearStart = 10;
+  @state() private yearStart = 2400;
 
   firstUpdated() {
     addEPSocketHandler('worldTimeChange', (change) => {
@@ -82,24 +82,23 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
               style="pointer-events: all"
             >
               ${renderSubmitForm({
-                props: { yearStart: this.yearStart },
-                update: ({ yearStart }) => {
-                  if (yearStart) {
-                    gameSettings.yearStart.update(yearStart);
-                  }
-                },
-                fields: ({ yearStart }) =>
-                  renderNumberField(
-                    { ...yearStart, label: localize('afterFall') },
-                    { min: 1 },
-                  ),
-              })}
+      props: { yearStart: this.yearStart },
+      update: ({ yearStart }) => {
+        if (yearStart) {
+          gameSettings.yearStart.update(yearStart);
+        }
+      },
+      fields: ({ yearStart }) =>
+        renderNumberField(
+          { ...yearStart, label: localize('afterFall') },
+          { min: 1 },
+        ),
+    })}
             </sl-popover-section>
           `}
         >
           <button class="date" ?disabled=${!canModify} slot="base">
-            ${currentDate.month} ${currentDate.day}, ${currentDate.era}
-            ${currentDate.year}
+            ${currentDate.day} ${currentDate.month} ${currentDate.year} ${currentDate.era}
           </button>
         </sl-popover>
       </div>
@@ -112,17 +111,17 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
             >
             </mwc-icon-button>
             ${renderAutoForm({
-              noDebounce: true,
-              props: { change: this.timeChange },
-              update: ({ change }) => {
-                if (change !== undefined) this.timeChange = change;
-              },
-              fields: ({ change }) =>
-                renderTimeField(
-                  { ...change, label: '' },
-                  { whenZero: `${localize('modify')} ${localize('time')}` },
-                ),
-            })}
+          noDebounce: true,
+          props: { change: this.timeChange },
+          update: ({ change }) => {
+            if (change !== undefined) this.timeChange = change;
+          },
+          fields: ({ change }) =>
+            renderTimeField(
+              { ...change, label: '' },
+              { whenZero: `${localize('modify')} ${localize('time')}` },
+            ),
+        })}
             <mwc-icon-button
               ?disabled=${disabled}
               icon="fast_forward"

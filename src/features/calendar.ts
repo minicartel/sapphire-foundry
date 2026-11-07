@@ -42,7 +42,7 @@ const monthThresholds = months.reduce((accum, [month, days], index) => {
 export const defaultStandardCalendar = (): StandardCalendar => ({
   yearLength: 365,
   dayLength: CommonInterval.Day,
-  worldStartYear: 10,
+  worldStartYear: 2400,
   worldStartTime: 0,
 });
 
@@ -70,7 +70,7 @@ export const getCurrentDateTime = (calendar: StandardCalendar) => {
   const dayInYear = (days % calendar.yearLength) + 1;
   const currentYear = calendar.worldStartYear + yearGain;
   return {
-    era: currentYear < 0 ? 'BF' : 'AF',
+    era: currentYear < 0 ? 'BC' : 'AD',
     year: Math.abs(currentYear),
     ...getMonth(dayInYear),
     time,

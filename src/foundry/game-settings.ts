@@ -146,7 +146,7 @@ export const registerEPSettings = once(() => {
   const yearStart = registerSystemSetting<number>('yearStart', {
     scope: 'world',
     config: false,
-    default: 10,
+    default: 2400,
   });
 
   const v10Compendiums = registerSystemSetting<string[]>('v10Compendiums', {

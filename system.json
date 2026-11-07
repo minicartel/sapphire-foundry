@@ -1,5 +1,5 @@
 {
-  "version": "1.3.3",
+  "version": "1.3.3.1",
   "id": "sapphire",
   "title": "Sapphire (EP2e)",
   "description": "Sapphire setting fork of the Eclipse Phase 2e system by Bubz.",
@@ -8,12 +8,8 @@
       "name": "Bubz"
     }
   ],
-  "esmodules": [
-    "./build/dist/index.js"
-  ],
-  "styles": [
-    "./build/dist/global.scss.css"
-  ],
+  "esmodules": ["./build/dist/index.js"],
+  "styles": ["./build/dist/global.scss.css"],
   "compatibility": {
     "minimum": "13",
     "verified": "13",

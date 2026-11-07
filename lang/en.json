@@ -1485,7 +1485,7 @@
     "sleeveWare": "Sleeve Ware",
     "healthType": "Health Type",
     "yearStart": "Year Start",
-    "afterFall": "After Fall",
+    "afterFall": "Year (AD)",
     "DESCRIPTIONS": {
       "invalidRollFormula": "Invalid roll formula",
       "medicineHeal": "...",
