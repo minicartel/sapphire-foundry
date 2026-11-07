@@ -4,11 +4,10 @@ import { UseWorldTime } from '@src/components/mixins/world-time-mixin';
 import { Placement } from '@src/components/popover/popover-options';
 import { getCurrentDateTime } from '@src/features/calendar';
 import { parseMilliseconds } from '@src/features/modify-milliseconds';
-import { advanceWorldTime, currentWorldTimeMS } from '@src/features/time';
+import { advanceWorldTime } from '@src/features/time';
 import { localize } from '@src/foundry/localization';
 import { userCan } from '@src/foundry/misc-helpers';
 import { addEPSocketHandler } from '@src/foundry/socket';
-import { gameSettings } from '@src/init';
 import { customElement, html, LitElement, state } from 'lit-element';
 import { repeat } from 'lit-html/directives/repeat';
 import mix from 'mix-with/lib';
@@ -28,15 +27,10 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
 
   @state() private changes: [number, string][] = [];
 
-  @state() private calendarStart = '2400-01-01';
-
   firstUpdated() {
     addEPSocketHandler('worldTimeChange', (change) => {
       this.changes = [...this.changes.slice(-3), change];
     });
-    gameSettings.calendarStart.subscribe(
-      (value) => (this.calendarStart = value),
-    );
   }
 
   private modifyTime(forwards: boolean) {
@@ -55,14 +49,23 @@ export class WorldTimeControls extends mix(LitElement).with(UseWorldTime) {
   private setDate(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.value) return;
-    const { time } = getCurrentDateTime(this.calendarStart);
-    const newStart = Date.parse(input.value) + time - currentWorldTimeMS();
-    gameSettings.calendarStart.update(new Date(newStart).toISOString());
+    const calendar = game.time.calendar;
+    const now = calendar.timeToComponents(game.time.worldTime);
+    const picked = new Date(input.value);
+    const year = picked.getUTCFullYear();
+    const dayOfYear = (picked.getTime() - Date.UTC(year, 0, 1)) / 86400000;
+    game.time.set({
+      year: year - calendar.years.yearZero,
+      day: dayOfYear,
+      hour: now.hour,
+      minute: now.minute,
+      second: now.second,
+    });
   }
 
   render() {
     const disabled = this.timeChange === 0;
-    const currentDate = getCurrentDateTime(this.calendarStart);
+    const currentDate = getCurrentDateTime();
     const { hours, minutes, seconds } = parseMilliseconds(currentDate.time);
     const canModify = game.user.isGM && userCan('SETTINGS_MODIFY');
     return html`

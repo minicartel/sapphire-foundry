@@ -51,7 +51,6 @@ import { localImage } from './utility/images';
 import { GMPanel } from './gm-panel/gm-panel';
 import { readyCanvas } from './foundry/canvas';
 
-
 export let gameSettings: ReturnType<typeof registerEPSettings>;
 export let overlay: EPOverlay;
 export let tooltip: ToolTip;
@@ -64,20 +63,27 @@ window.addEventListener('mouseup', setLastPosition, { capture: true });
 window.addEventListener('click', setLastPosition, { capture: true });
 window.addEventListener('drop', setLastPosition, { capture: true });
 
-
-
 Hooks.once('init', () => {
+  CONFIG.time.worldCalendarConfig = {
+    ...CONFIG.time.worldCalendarConfig,
+    years: {
+      yearZero: 2400,
+      firstWeekday: 5,
+      leapYear: { leapStart: 0, leapInterval: 4 },
+    },
+  };
   gameSettings = registerEPSettings();
 
   gameSettings.combatState.subscribe(() => {
-    const toggleCombatButton = document.querySelector("#token-hud button[data-action='combat']:not(:focus-within)");
+    const toggleCombatButton = document.querySelector(
+      "#token-hud button[data-action='combat']:not(:focus-within)",
+    );
     if (toggleCombatButton instanceof HTMLElement) {
-      const token = (readyCanvas()?.tokens.hud.object) as Token | undefined;
+      const token = readyCanvas()?.tokens.hud.object as Token | undefined;
       const isInCombat = token ? tokenIsInCombat(token) : false;
       toggleCombatButton.classList.toggle('active', isInCombat);
     }
-  })
-
+  });
 
   //@ts-expect-error
   foundry.documents.BaseItem.DEFAULT_ICON = localImage(
@@ -163,7 +169,7 @@ Hooks.once('ready', async () => {
               else if (tool.button) {
                 if (tool.onClick instanceof Function) tool.onClick();
                 else if (tool['onChange'] instanceof Function) {
-                  tool.onChange()
+                  tool.onChange();
                 }
               }
 
@@ -174,8 +180,7 @@ Hooks.once('ready', async () => {
 
               queueMicrotask(() => {
                 ui.controls.render();
-
-              })
+              });
             },
           })),
           position: ev,
@@ -201,19 +206,17 @@ Hooks.once('ready', async () => {
     // SlWindow.container = overlay;
     const windowContainer = document.createElement('div');
     windowContainer.className = 'ep-window-container';
-    windowContainer.addEventListener("dragstart", ev => {
-      ev.stopPropagation()
-    })
-    SlWindow.container = windowContainer
+    windowContainer.addEventListener('dragstart', (ev) => {
+      ev.stopPropagation();
+    });
+    SlWindow.container = windowContainer;
     document.body.append(windowContainer);
-
 
     tooltip = document.createElement('sl-tooltip');
     // tooltip.slot = 'tooltip';
     overlay.append(tooltip);
     document.body.classList.add('ready');
     Hooks.call('ep-ready', true);
-
 
     const extraInfo = document.createElement('div');
     extraInfo.className = 'ep-extra-info';
@@ -226,67 +229,69 @@ Hooks.once('ready', async () => {
       html`
         <div class="ep-extra-chat-controls">
           <mwc-icon-button
-          data-ep-tooltip=${`${localize('custom')} ${localize('roll')}`}
-          @mouseover=${tooltip.fromData}
-          @click=${(ev: Event & { currentTarget: HTMLElement }) =>
-          openWindow({
-            key: CustomRollApp,
-            content: html`<custom-roll-app></custom-roll-app>`,
-            name: `${localize('custom')} ${localize('roll')}`,
-            adjacentEl: ev.currentTarget,
-          })}
-        >
-          <img class="noborder" src="icons/svg/combat.svg" />
-        </mwc-icon-button>
-        <sl-popover
-          placement=${Placement.Left}
-          focusSelector="input"
-          .renderOnDemand=${(popover: Popover) => {
-          return html`<sl-popover-section>
-              ${renderSubmitForm({
-            noDebounce: true,
-            submitButtonText: 'Roll Success Test',
-            submitEmpty: true,
-            props: { target: 50 },
-            update: async (changed) => {
-              const { target = 50 } = changed;
-              createMessage({
-                data: {
-                  successTest: {
-                    disableSuperiorEffects: true,
-                    parts: [{ name: 'Base', value: target }],
-                    states: [
-                      {
-                        ...(await rollSuccessTest({ target })),
-                        action: 'initial',
-                      },
-                    ],
-                  },
-                },
-                visibility: rollModeToVisibility(
-                  game.settings.get('core', 'rollMode'),
-                ),
-              });
-              popover.open = false;
-            },
-            fields: ({ target }) =>
-              renderNumberField(target, { min: 0, max: 99 }),
-          })}
-            </sl-popover-section>`;
-        }}
-        >
-          <mwc-icon-button
-            slot="base"
-            data-ep-tooltip="Quick Success Test"
+            data-ep-tooltip=${`${localize('custom')} ${localize('roll')}`}
             @mouseover=${tooltip.fromData}
-            @contextmenu=${() => {
-          new Roll('1d100 - 1').toMessage();
-        }}
+            @click=${(ev: Event & { currentTarget: HTMLElement }) =>
+              openWindow({
+                key: CustomRollApp,
+                content: html`<custom-roll-app></custom-roll-app>`,
+                name: `${localize('custom')} ${localize('roll')}`,
+                adjacentEl: ev.currentTarget,
+              })}
           >
-            <span style="font-size:var(--mdc-icon-size);font-weight:bold;">%</span>
+            <img class="noborder" src="icons/svg/combat.svg" />
           </mwc-icon-button>
-        </sl-popover>
-      </div>
+          <sl-popover
+            placement=${Placement.Left}
+            focusSelector="input"
+            .renderOnDemand=${(popover: Popover) => {
+              return html`<sl-popover-section>
+                ${renderSubmitForm({
+                  noDebounce: true,
+                  submitButtonText: 'Roll Success Test',
+                  submitEmpty: true,
+                  props: { target: 50 },
+                  update: async (changed) => {
+                    const { target = 50 } = changed;
+                    createMessage({
+                      data: {
+                        successTest: {
+                          disableSuperiorEffects: true,
+                          parts: [{ name: 'Base', value: target }],
+                          states: [
+                            {
+                              ...(await rollSuccessTest({ target })),
+                              action: 'initial',
+                            },
+                          ],
+                        },
+                      },
+                      visibility: rollModeToVisibility(
+                        game.settings.get('core', 'rollMode'),
+                      ),
+                    });
+                    popover.open = false;
+                  },
+                  fields: ({ target }) =>
+                    renderNumberField(target, { min: 0, max: 99 }),
+                })}
+              </sl-popover-section>`;
+            }}
+          >
+            <mwc-icon-button
+              slot="base"
+              data-ep-tooltip="Quick Success Test"
+              @mouseover=${tooltip.fromData}
+              @contextmenu=${() => {
+                new Roll('1d100 - 1').toMessage();
+              }}
+            >
+              <span style="font-size:var(--mdc-icon-size);font-weight:bold;"
+                >%</span
+              >
+            </mwc-icon-button>
+          </sl-popover>
+        </div>
       `,
       extraChatControlsFrag,
     );
@@ -297,26 +302,30 @@ Hooks.once('ready', async () => {
       .getElementById('ui-top')
       ?.insertBefore(extraInfo, document.getElementById('loading'));
 
-
     if (game.user.isGM) {
       const gmFrag = new DocumentFragment();
-      render(html` <mwc-icon-button
-      id="ep-gm-panel"
-        data-ep-tooltip=${`GM Panel`}
-        @mouseover=${tooltip.fromData}
-        @click=${(ev: Event & { currentTarget: HTMLElement }) =>
-          openWindow({
-            key: GMPanel,
-            content: html`<gm-panel></gm-panel>`,
-            name: `GM Panel`,
-            adjacentEl: ev.currentTarget,
-          }, { resizable: ResizeOption.Both })}
-      >
-        <img  class="noborder" src="icons/svg/dice-target.svg" />
-      </mwc-icon-button>`, gmFrag)
+      render(
+        html` <mwc-icon-button
+          id="ep-gm-panel"
+          data-ep-tooltip=${`GM Panel`}
+          @mouseover=${tooltip.fromData}
+          @click=${(ev: Event & { currentTarget: HTMLElement }) =>
+            openWindow(
+              {
+                key: GMPanel,
+                content: html`<gm-panel></gm-panel>`,
+                name: `GM Panel`,
+                adjacentEl: ev.currentTarget,
+              },
+              { resizable: ResizeOption.Both },
+            )}
+        >
+          <img class="noborder" src="icons/svg/dice-target.svg" />
+        </mwc-icon-button>`,
+        gmFrag,
+      );
       extraInfo?.prepend(gmFrag);
     }
-
   }, 150);
 
   const compendiumSearchButton = () => {
@@ -329,12 +338,12 @@ Hooks.once('ready', async () => {
           icon="search"
           raised
           @click=${() => {
-          openWindow({
-            key: CompendiumSearch,
-            name: localize('search'),
-            content: html` <compendium-search></compendium-search> `,
-          });
-        }}
+            openWindow({
+              key: CompendiumSearch,
+              name: localize('search'),
+              content: html` <compendium-search></compendium-search> `,
+            });
+          }}
         ></mwc-button>
       `,
       frag,
@@ -384,7 +393,6 @@ Hooks.once('ready', async () => {
       }
     },
   });
-
 
   mutatePlaceableHook({
     entity: Token,
@@ -475,7 +483,6 @@ applicationHook({
             listItem.getAttribute('data-entry-id'),
           );
 
-
           listItem
             .querySelector('.entry-name')
             ?.setAttribute('data-type', doc.proxy.fullType);
@@ -512,27 +519,28 @@ if (true) {
       hook: 'on',
       event: 'render',
       callback: (_, list) => {
-        return list?.querySelectorAll<HTMLLIElement>('.document').forEach((listItem) => {
-          const { entryId } = listItem.dataset;
-          const doc = entryId &&
-            game[app === ActorDirectory ? 'actors' : 'items'].get(entryId);
-          if (!doc)
-            return;
+        return list
+          ?.querySelectorAll<HTMLLIElement>('.document')
+          .forEach((listItem) => {
+            const { entryId } = listItem.dataset;
+            const doc =
+              entryId &&
+              game[app === ActorDirectory ? 'actors' : 'items'].get(entryId);
+            if (!doc) return;
 
-          if (isItem(doc)) {
-            applyFullItemInfo(doc, listItem);
-          } else {
-            applyFullActorItemInfo(doc, listItem);
-          }
-        });
+            if (isItem(doc)) {
+              applyFullItemInfo(doc, listItem);
+            } else {
+              applyFullActorItemInfo(doc, listItem);
+            }
+          });
       },
     });
   }
 }
 
 function applyFullActorItemInfo(actor: ActorEP, listItem: HTMLElement) {
-  const nameElement =
-    listItem.querySelector<HTMLHeadingElement>('.entry-name');
+  const nameElement = listItem.querySelector<HTMLHeadingElement>('.entry-name');
   if (!nameElement) {
     return;
   }
@@ -548,8 +556,7 @@ function applyFullActorItemInfo(actor: ActorEP, listItem: HTMLElement) {
 }
 
 function applyFullItemInfo(item: ItemEP, listItem: HTMLElement) {
-  const nameElement =
-    listItem.querySelector<HTMLHeadingElement>('.entry-name');
+  const nameElement = listItem.querySelector<HTMLHeadingElement>('.entry-name');
   if (!nameElement) {
     return;
   }
