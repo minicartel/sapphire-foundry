@@ -20,7 +20,7 @@
     }
   },
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "influences": [
         {
           "type": "physicalDamage",

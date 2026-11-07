@@ -1,8 +1,8 @@
 export enum EP {
-  Name = 'ep2e',
-  Path = `systems/ep2e`,
+  Name = 'sapphire',
+  Path = `systems/sapphire`,
   LocalizationNamespace = 'EP2E',
-  Socket = `system.ep2e`,
+  Socket = `system.sapphire`,
 }
 
 export interface SystemSchema {

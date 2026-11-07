@@ -4,7 +4,7 @@
   "type": "character",
   "sort": 100001,
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "infomorph": null,
       "biological": {
         "_id": "uyWieHLllmwNTxWb",
@@ -1269,7 +1269,7 @@
       "type": "substance",
       "sort": 2450000,
       "flags": {
-        "ep2e": {
+        "sapphire": {
           "baseAppliedItems": [
             {
               "_id": "nWrojhv3EC7s8Y63-base-ltsptaukpd",
@@ -2399,7 +2399,7 @@
   "img": "icons/svg/mystery-man.svg",
   "folder": null,
   "_stats": {
-    "systemId": "ep2e",
+    "systemId": "sapphire",
     "systemVersion": "1.0",
     "coreVersion": "10.279",
     "createdTime": null,

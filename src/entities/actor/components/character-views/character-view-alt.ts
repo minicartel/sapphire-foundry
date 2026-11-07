@@ -281,8 +281,8 @@ export class CharacterViewAlt extends CharacterViewBase {
                   ...[...proxy.items.values()].map((i) => i.getDataCopy()),
                 );
                 const vehicleData = proxy.dataCopy();
-                vehicleData.flags.ep2e = {
-                  ...(vehicleData.flags.ep2e || {}),
+                vehicleData.flags.sapphire = {
+                  ...(vehicleData.flags.sapphire || {}),
                   exoskeletonItemIds: addedItemIds,
                 };
                 this.character.updater

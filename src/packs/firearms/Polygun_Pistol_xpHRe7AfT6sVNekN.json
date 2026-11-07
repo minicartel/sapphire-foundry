@@ -54,7 +54,7 @@
     "wareType": ""
   },
   "flags": {
-    "ep2e": {
+    "sapphire": {
       "shapes": [
         {
           "name": "Holdout",
@@ -113,7 +113,7 @@
           "folder": "jkqhTF38GYJaN5wo",
           "sort": 100000,
           "flags": {
-            "ep2e": {
+            "sapphire": {
               "specialAmmo": null
             }
           },
@@ -179,7 +179,7 @@
           "folder": "jkqhTF38GYJaN5wo",
           "sort": 300000,
           "flags": {
-            "ep2e": {
+            "sapphire": {
               "specialAmmo": null
             }
           },
@@ -245,7 +245,7 @@
           "folder": "jkqhTF38GYJaN5wo",
           "sort": 400000,
           "flags": {
-            "ep2e": {
+            "sapphire": {
               "specialAmmo": null
             }
           },

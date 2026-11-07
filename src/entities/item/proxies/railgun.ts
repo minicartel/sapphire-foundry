@@ -266,8 +266,8 @@ export class Railgun
         description: this.description,
         ...this.cost,
       };
-      if (shapeData.flags.ep2e?.transformation) {
-        shapeData.flags.ep2e.transformation = null;
+      if (shapeData.flags.sapphire?.transformation) {
+        shapeData.flags.sapphire.transformation = null;
       }
       shapeData.system.state = {
         ...this.epData.state,
@@ -289,7 +289,7 @@ export class Railgun
       this.updater.path('flags', EP.Name, 'shapes').commit((items) => {
         const changed = [...(items || [])];
         const _id = uniqueStringID(changed.map((i) => i._id));
-        const { shapes, transformation, ...flags } = myData.flags.ep2e || {};
+        const { shapes, transformation, ...flags } = myData.flags.sapphire || {};
 
         changed.push({ ...myData, _id, flags: { [EP.Name]: flags } });
         const index = changed.findIndex((s) => s._id === shape.id);
@@ -301,7 +301,7 @@ export class Railgun
   }
 
   addShape(weaponData: ReturnType<Railgun['getDataCopy']>) {
-    const { shapes, ...flags } = weaponData.flags.ep2e || {};
+    const { shapes, ...flags } = weaponData.flags.sapphire || {};
     weaponData.system = {
       ...weaponData.system,
       shapeChanging: true,

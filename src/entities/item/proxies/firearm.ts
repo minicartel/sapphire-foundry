@@ -353,7 +353,7 @@ export class Firearm
       this.updater.path('flags', EP.Name, 'shapes').commit((items) => {
         const changed = [...(items || [])];
         const _id = uniqueStringID(changed.map((i) => i._id));
-        const { shapes, transformation, ...flags } = myData.flags.ep2e || {};
+        const { shapes, transformation, ...flags } = myData.flags.sapphire || {};
 
         changed.push({ ...myData, _id, flags: { [EP.Name]: flags } });
         const index = changed.findIndex((s) => s._id === shape.id);
@@ -365,7 +365,7 @@ export class Firearm
   }
 
   addShape(weaponData: ReturnType<Firearm['getDataCopy']>) {
-    const { shapes, ...flags } = weaponData.flags.ep2e || {};
+    const { shapes, ...flags } = weaponData.flags.sapphire || {};
     weaponData.system = {
       ...weaponData.system,
       shapeChanging: true,
