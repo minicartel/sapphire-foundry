@@ -37,20 +37,42 @@ export const activateTargetingTool = () => {
 export const activeTokenStatusEffects = ({ document: data, actor }: Token) =>
   ((actor as ActorEP | undefined)?.conditions ?? []).map(
     (condition) => conditionIcons[condition],
-  )
-
-export const distanceBetweenTokens = (tokenA: Token, tokenB: Token) => {
-  let distance = Math.hypot(
-    readyCanvas()!.grid.measureDistance(tokenA.center, tokenB.center),
-    Math.abs(tokenA.document.elevation - tokenB.document.elevation),
   );
 
-  const gridScale = readyCanvas()?.scene.gridDistance || 1;
+const squareCentres = (token: Token) => {
+  const { x, y, width, height } = token.document;
+  if (width < 1 || height < 1) return [token.center];
+  const size = readyCanvas()!.grid.size;
+  const centres: { x: number; y: number }[] = [];
+  for (let col = 0; col < width; col++) {
+    for (let row = 0; row < height; row++) {
+      centres.push({
+        x: x + (col + 0.5) * size,
+        y: y + (row + 0.5) * size,
+      });
+    }
+  }
+  return centres;
+};
 
-  if (tokenB.document.width === tokenB.document.height) {
-    distance -= (tokenB.document.width / 2) * gridScale;
+export const distanceBetweenTokens = (tokenA: Token, tokenB: Token) => {
+  const grid = readyCanvas()!.grid;
+  let shortest = Infinity;
+
+  if (grid.type === CONST.GRID_TYPES.SQUARE) {
+    for (const a of squareCentres(tokenA)) {
+      for (const b of squareCentres(tokenB)) {
+        shortest = Math.min(shortest, grid.measurePath([a, b]).distance);
+      }
+    }
+  } else {
+    shortest = grid.measurePath([tokenA.center, tokenB.center]).distance;
   }
 
+  const distance = Math.hypot(
+    shortest,
+    Math.abs(tokenA.document.elevation - tokenB.document.elevation),
+  );
   return nonNegative(Math.round(distance * 10) / 10);
 };
 

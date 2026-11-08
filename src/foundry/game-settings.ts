@@ -143,12 +143,6 @@ export const registerEPSettings = once(() => {
     },
   });
 
-  const calendarStart = registerSystemSetting<string>('calendarStart', {
-    scope: 'world',
-    config: false,
-    default: '2400-01-01',
-  });
-
   const v10Compendiums = registerSystemSetting<string[]>('v10Compendiums', {
     scope: 'world',
     config: false,
@@ -163,7 +157,6 @@ export const registerEPSettings = once(() => {
     combatState,
     disableSheetTransparency,
     alwaysResizableWindows,
-    calendarStart,
     v10Compendiums,
   } as const;
 });
