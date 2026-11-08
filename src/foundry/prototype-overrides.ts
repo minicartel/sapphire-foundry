@@ -31,7 +31,10 @@ import { navMenuListener } from './foundry-apps';
 import type { TokenData } from './foundry-cont';
 import { localize } from './localization';
 import { convertMenuOptions, gmIsConnected } from './misc-helpers';
-import { activeTokenStatusEffects } from './token-helpers';
+import {
+  activeTokenStatusEffects,
+  distanceBetweenTokens,
+} from './token-helpers';
 
 export const overridePrototypes = () => {
   const { getData } = UserConfig.prototype;
@@ -70,6 +73,21 @@ export const overridePrototypes = () => {
     this.actor?.render(false, {});
   };
 
+  const { _getTooltipText } = Token.prototype;
+
+  Token.prototype._getTooltipText = function () {
+    const base = _getTooltipText.call(this);
+    const selected = readyCanvas()?.tokens.controlled[0];
+    if (!this.hover || !selected || selected === this) return base;
+    const units = readyCanvas()?.scene?.grid.units ?? '';
+    const range = `${distanceBetweenTokens(selected, this)} ${units}`.trim();
+    return base ? `${base}\n${range}` : range;
+  };
+
+  Hooks.on('hoverToken', (token: Token) =>
+    token.renderFlags.set({ refreshTooltip: true }),
+  );
+
   Token.prototype._drawEffects = async function () {
     this.effects.renderable = false;
 
@@ -106,14 +124,18 @@ export const overridePrototypes = () => {
   const { TokenHUD } = foundry.applications.hud;
 
   // @ts-expect-error
-  const { getData: getTokenData, _getStatusEffectChoices, _prepareContext } = TokenHUD.prototype;
+  const {
+    getData: getTokenData,
+    _getStatusEffectChoices,
+    _prepareContext,
+  } = TokenHUD.prototype;
 
   // @ts-expect-error
   TokenHUD.prototype._prepareContext = async function (options: unknown) {
     const context = (await _prepareContext.call(this, options)) as {
       canToggleCombat: boolean;
       combatClass: 'active' | '';
-    }
+    };
     context.canToggleCombat = gmIsConnected();
     context.combatClass =
       this.object && tokenIsInCombat(this.object) ? 'active' : '';
@@ -127,10 +149,11 @@ export const overridePrototypes = () => {
     },
   });
 
-
   // @ts-expect-error
   TokenHUD.DEFAULT_OPTIONS.actions.combat = function (event: Event) {
-    const button = (event.currentTarget as HTMLElement).querySelector("button[data-action='combat']");
+    const button = (event.currentTarget as HTMLElement).querySelector(
+      "button[data-action='combat']",
+    );
     event.preventDefault();
     if (!this.object?.scene || !(button instanceof HTMLElement)) {
       return;
@@ -212,8 +235,6 @@ export const overridePrototypes = () => {
     return choices;
   };
 
-
-
   const { defaultOptions: journalSheetOptions } = JournalSheet;
   Object.defineProperty(JournalSheet, 'defaultOptions', {
     enumerable: true,
@@ -263,19 +284,15 @@ export const overridePrototypes = () => {
 
   const { _replaceHTML } = CombatTracker.prototype;
   //@ts-expect-error
-  CombatTracker.prototype._renderHTML = () => { };
+  CombatTracker.prototype._renderHTML = () => {};
   CombatTracker.prototype._replaceHTML = function (
     ...args: Parameters<typeof _replaceHTML>
   ) {
     const element = args[1] as HTMLElement;
     // @ts-expect-error
-    const options = args[2] as { isFirstRender: boolean }
+    const options = args[2] as { isFirstRender: boolean };
     if (options.isFirstRender) {
-      render(
-        html`<combat-view
-      ></combat-view>`,
-        element,
-      );
+      render(html`<combat-view></combat-view>`, element);
     }
     // _replaceHTML.apply(this, args);
   };
@@ -316,8 +333,6 @@ export const overridePrototypes = () => {
   //     });
   //   });
   // };
-
-
 
   ChatMessage._getSpeakerFromUser = function ({
     scene,
